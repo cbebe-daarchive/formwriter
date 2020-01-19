@@ -68,7 +68,6 @@ void setup() {
   setupFields();
 }
 
-
 uint16_t uint16_from_serial3() {
   uint16_t num = 0;
   num = num | ((uint32_t)Serial3.read()) << 0;
@@ -88,7 +87,6 @@ void receiveArray() {
       }
     } 
     pointIndex ++;
-
     if (pointIndex == MAX_ARRAYSIZE) {
       endRead = true;
     } 

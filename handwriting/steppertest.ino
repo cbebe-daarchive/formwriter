@@ -4,10 +4,9 @@
 #define LEFT_CCW 9 
 #define RIGHT_CW 2
 #define RIGHT_CCW 3
-const int stepsPerRevolution = 4076;
 
-Stepper leftStep = Stepper(stepsPerRevolution, 13, 12, 11, 10);
-Stepper rightStep = Stepper(stepsPerRevolution, 55, 54, 53, 52);
+Stepper leftStep = Stepper(32, 13, 12, 11, 10);
+Stepper rightStep = Stepper(32, 55, 54, 53, 52);
 
 
 void setup() {
