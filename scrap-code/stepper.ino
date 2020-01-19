@@ -9,7 +9,7 @@ const int stepsPerRevolution = 4076;
 // Pin 10 to IN3 on the ULN2003 driver
 // Pin 11 to IN4 on the ULN2003 driver
 // Create stepper object called 'myStepper', note the pin order:
-Stepper myStepper = Stepper(stepsPerRevolution, 8, 10, 9, 11);
+Stepper myStepper = Stepper(stepsPerRevolution, 13, 12, 11, 10);
 void setup() {
   // Set the speed to 5 rpm:
   myStepper.setSpeed(8);

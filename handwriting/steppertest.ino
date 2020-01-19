@@ -1,21 +1,22 @@
 #include <Stepper.h>
 
-#define LEFT_CW 12
-#define LEFT_CCW 13 
+#define LEFT_CW 8
+#define LEFT_CCW 9 
 #define RIGHT_CW 2
 #define RIGHT_CCW 3
 const int stepsPerRevolution = 4076;
 
-Stepper leftStep = Stepper(stepsPerRevolution, 11, 10, 9, 8);
-Stepper rightStep = Stepper(stepsPerRevolution, 4, 5, 6, 7);
+Stepper leftStep = Stepper(stepsPerRevolution, 13, 12, 11, 10);
+Stepper rightStep = Stepper(stepsPerRevolution, 55, 54, 53, 52);
 
 
 void setup() {
-  int pushButtons[] = {2, 3, 12, 13};
-  for (int i = 0; i < 4; i++) {
+  int pushButtons[] = {8, 9, 39, 40};
+  for (int i = 0; i < 2; i++) {
     pinMode(pushButtons[i], INPUT);
     digitalWrite(pushButtons[i], HIGH);
   }
+
   leftStep.setSpeed(8); rightStep.setSpeed(8);
   Serial.begin(9600); Serial3.begin(9600);
 }
