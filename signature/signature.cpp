@@ -28,7 +28,22 @@
 
 MCUFRIEND_kbv tft;
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
-// different than SD
+
+void writeVertical(char text[], int X, int Y, int length) {
+  for (int i = 0; i < length; i++) {
+    tft.setCursor(X, Y + (16 * i));
+    tft.print(text[i]);
+  }
+}
+
+void setupButtons() {
+  tft.drawRect(TFT_WIDTH - 60, 0, 60, 320, TFT_RED);
+  tft.drawRect(TFT_WIDTH - 60, TFT_HEIGHT/2, 60, 320, TFT_RED);
+  char reset[] = 'RESET';
+  char submit[] = 'SUBMIT';
+  writeVertical(reset, TFT_WIDTH - 35, 45, 5);
+  writeVertical(submit, TFT_WIDTH - 35, TFT_HEIGHT/2 + 45);
+}
 
 void setup() {
   init();
@@ -38,6 +53,7 @@ void setup() {
   tft.begin(ID);
   tft.fillScreen(TFT_WHITE);
   tft.setRotation(1);
+  setupButtons();
 }
 
 int pointX, pointY; bool penLift = true;
