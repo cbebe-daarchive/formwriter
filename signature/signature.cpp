@@ -65,10 +65,12 @@ bool processTouchScreen() {
 
 void sign() {
   int delayCount = 0;
-  while (!processTouchScreen() || delayCount < 100) {
+  while (!processTouchScreen() && delayCount < 50) {
     delay(1); delayCount++;
   }
-  penLift = true;
+  if (delayCount == 50) {
+  	penLift = true;	
+  }  
 }
 
 int main() {
