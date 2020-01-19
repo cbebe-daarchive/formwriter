@@ -37,12 +37,14 @@ void writeVertical(char text[], int X, int Y, int length) {
 }
 
 void setupButtons() {
-  tft.drawRect(TFT_WIDTH - 60, 0, 60, 320, TFT_RED);
-  tft.drawRect(TFT_WIDTH - 60, TFT_HEIGHT/2, 60, 320, TFT_RED);
-  char reset[] = 'RESET';
-  char submit[] = 'SUBMIT';
+  tft.drawRect(TFT_WIDTH - 60, 0, 60, 320, TFT_BLACK);
+  tft.drawRect(TFT_WIDTH - 60, TFT_HEIGHT/2, 60, 320, TFT_BLACK);
+  tft.setTextColor(TFT_BLACK);
+  tft.setTextSize(2);
+  char reset[] = "RESET";
+  char submit[] = "SUBMIT";
   writeVertical(reset, TFT_WIDTH - 35, 45, 5);
-  writeVertical(submit, TFT_WIDTH - 35, TFT_HEIGHT/2 + 45);
+  writeVertical(submit, TFT_WIDTH - 35, TFT_HEIGHT/2 + 45, 6);
 }
 
 void setup() {
