@@ -1,39 +1,22 @@
-#include <Arduino.h>
-
-void setup() {  
-  for (int i = 4; i < 8; ++i) {
-    pinMode(i, INPUT);
-    digitalWrite(i, LOW);
-  }
+/* Example sketch to control a 28BYJ-48 stepper motor with ULN2003 driver board and Arduino UNO. More info: https://www.makerguides.com */
+// Include the Arduino Stepper.h library:
+#include <Stepper.h>
+// Define number of steps per rotation:
+const int stepsPerRevolution = 4076;
+// Wiring:
+// Pin 8 to IN1 on the ULN2003 driver
+// Pin 9 to IN2 on the ULN2003 driver
+// Pin 10 to IN3 on the ULN2003 driver
+// Pin 11 to IN4 on the ULN2003 driver
+// Create stepper object called 'myStepper', note the pin order:
+Stepper myStepper = Stepper(stepsPerRevolution, 8, 10, 9, 11);
+void setup() {
+  // Set the speed to 5 rpm:
+  myStepper.setSpeed(8);
+  
+  // Begin Serial communication at a baud rate of 9600:
+  Serial.begin(9600);
 }
-
-int8_t getHexValue(char digit) {
-	// converting char to their ASCII value without using int() function
-	uint8_t hexNum = digit - '\0';
-	// 0 to 9
-	if (48 <= hexNum && hexNum <= 57) {
-    	return hexNum - 48;
-	// A to F
-	} else if (65 <= hexNum && hexNum <= 70) {
-    	return hexNum - 55;
-	// a to F
-	} else if (97 <= hexNum && hexNum <= 102) {
-    	return hexNum - 87;
-	} else {
-    	return -1;
-	}
-    
-}
-
-
 void loop() {
-  if (Serial.available() > 0) {
-    char digit = Serial.read();
-    int8_t hexNum = getHexValue(digit);
-    
-    for (int j = 0; j < 4; j++) {
-      digitalWrite(j + 4, hexNum & (1 << j));
-    }
-  }
-} 
-
+  myStepper.step(1);
+}
