@@ -51,9 +51,9 @@ void setupFields() {
   tft.setTextColor(TFT_BLACK);
   tft.setTextSize(2);
   char reset[] = "RESET";
-  char send[] = "SEND";
+  char draw[] = "DRAW";
   writeVertical(reset, TFT_WIDTH - 35, 45, 5);
-  writeVertical(send, TFT_WIDTH - 35, TFT_HEIGHT/2 + 45, 4);
+  writeVertical(draw, TFT_WIDTH - 35, TFT_HEIGHT/2 + 45, 4);
 }
 
 void setup() {
@@ -75,18 +75,50 @@ uint16_t uint16_from_serial3() {
   return num;
 }
 
+void fieldReset() {
+  tft.fillRect(31, 41, FORM_WIDTH - 2, FORM_HEIGHT - 2, TFT_WHITE);
+  for (uint16_t i = 0; i < MAX_ARRAYSIZE; i++) {
+    pointsX[i] = 0;
+    pointsY[i] = 0;
+  }
+  pointIndex = 0;
+}
+
+uint16_t X[] = {0, 89, 89, 88, 89, 92, 95, 100, 104, 111, 117, 123, 125, 128, 127, 125, 122,
+ 120, 119, 118, 118, 117, 119, 119, 120, 120, 120, 120, 119, 119, 119, 119, 119,
+ 119, 120, 122, 128, 133, 138, 141, 140, 135, 127, 119, 115, 112, 111, 0, 158, 157, 156, 156, 155, 156, 157, 163, 170, 178, 184, 187, 186, 181, 173, 162, 156, 
+ 154, 156, 158, 162, 169, 180, 188, 0, 198, 196, 196, 199, 206, 215, 222, 228, 230
+, 229, 223, 216, 208, 200, 194, 191, 192, 198, 208, 217, 223, 0, 242, 242, 242, 
+243, 246, 247, 250, 253, 254, 255, 255, 0, 280, 279, 277, 276, 276, 276, 278, 280, 282, 283, 283, 284, 284, 284, 0, 246, 247, 249, 255, 263, 275, 283, 286, 287,
+ 0, 302, 302, 301, 299, 296, 294, 295, 300, 304, 310, 314, 317, 317, 316, 311, 307, 303, 300, 299, 299, 299, 299, 299, 299, 300, 300, 302, 303, 306, 307, 310, 311, 314, 316, 320, 322, 323, 326, 326, 326, 326, 0, 336, 335, 333, 331, 329, 329
+, 331, 336, 340, 343, 347, 348, 348, 349, 350, 351, 351, 350, 350, 350, 351, 355
+, 361, 365, 368, 371, 372, 368, 369, 0, 0};
+
+uint16_t Y[] = {0, 113, 114, 115, 118, 123, 128, 136, 
+141, 146, 147, 148, 147, 143, 136, 130, 125, 123, 123, 123, 123, 122, 122, 121, 
+121, 121, 121, 121, 121, 121, 121, 121, 121, 121, 122, 124, 129, 136, 146, 158, 
+170, 181, 191, 200, 205, 207, 208, 0, 177, 176, 175, 175, 175, 175, 175, 175, 175, 174, 171, 167, 162, 157, 155, 158, 164, 170, 178, 186, 193, 195, 193, 190, 0,
+ 177, 174, 175, 175, 176, 176, 174, 170, 165, 160, 155, 153, 154, 158, 165, 173,
+ 180, 184, 185, 184, 182, 0, 136, 135, 136, 138, 144, 153, 166, 180, 192, 197, 199, 0, 132, 130, 130, 130, 131, 134, 139, 148, 162, 176, 188, 193, 194, 194, 0, 
+170, 168, 167, 167, 168, 167, 165, 164, 164, 0, 170, 167, 166, 166, 169, 174, 179, 185, 188, 189, 187, 182, 174, 169, 164, 162, 164, 166, 168, 168, 168, 168, 168, 168, 167, 166, 165, 164, 163, 162, 161, 160, 160, 162, 166, 172, 179, 185, 189, 190, 190, 0, 165, 161, 160, 162, 165, 
+169, 172, 177, 182, 185, 186, 186, 185,
+ 182, 176, 170, 167, 166, 166, 167, 169, 174, 178, 179, 177, 174, 167, 160, 157, 0, 0};
+
+
 void receiveArray() {
+  pointIndex = 0;
   bool endRead = false;
   while (!endRead) {
     pointsX[pointIndex] = uint16_from_serial3();
     pointsY[pointIndex] = uint16_from_serial3();
-
-    if (i > 0 && pointsX[pointIndex] == 0 && pointsY[pointIndex] == 0) {
+    pointsX[pointIndex] = X[pointIndex];
+    pointsY[pointIndex] = Y[pointIndex];
+    if (pointIndex > 0 && pointsX[pointIndex] == 0 && pointsY[pointIndex] == 0) {
       if (pointsX[pointIndex - 1] == 0 && pointsY[pointIndex - 1] == 0) {
         endRead = true;
       }
     } 
-    pointIndex ++;
+    pointIndex++;
     if (pointIndex == MAX_ARRAYSIZE) {
       endRead = true;
     } 
@@ -95,20 +127,42 @@ void receiveArray() {
 
 
 void drawOnScreen() {
+  // while (Serial3.available() == 0) {}
   receiveArray();
-  for (uint16__t i = 2; i < pointIndex; i++) {
+  for (uint16_t i = 2; i < pointIndex; i++) {
     if (pointsX[i] != 0 && pointsY[i] != 0) {
       tft.drawLine(pointsX[i - 1], pointsY[i - 1], pointsX[i], pointsY[i], TFT_BLACK);
     } else {
       i++;
+    }
+    delay(50);
+  }
+}
+
+void processTouchScreen() {
+  TSPoint touch = ts.getPoint();
+  pinMode(YP, OUTPUT); 
+  pinMode(XM, OUTPUT); 
+
+  if (touch.z < MINPRESSURE || touch.z > MAXPRESSURE) {
+    return;
+  }
+
+  int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
+  int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
+  if (screen_x > TFT_WIDTH - 60) {
+    if (screen_y > TFT_HEIGHT/2) {
+      drawOnScreen();
+    } else {
+      fieldReset();
     }
   }
 }
 
 int main() {
   setup();
-  while (true) {
-    drawOnScreen();
+  while (1) {
+    processTouchScreen();
   }
   Serial.end();
   Serial3.end();
