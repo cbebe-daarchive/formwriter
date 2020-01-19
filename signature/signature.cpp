@@ -40,43 +40,41 @@ void setup() {
   tft.setRotation(1);
 }
 
-int pointX, pointY; bool first = true;
+int pointX, pointY; bool penLift = true;
 
-void processTouchScreen() {
+bool processTouchScreen() {
   TSPoint touch = ts.getPoint();
   pinMode(YP, OUTPUT); 
   pinMode(XM, OUTPUT); 
+
   if (touch.z < MINPRESSURE || touch.z > MAXPRESSURE) {
-	return;
+    return false;
   }
+
   int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
   int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
-  if (first) {
+  if (penLift) {
     tft.drawPixel(screen_x, screen_y, TFT_BLACK);
-    first = false;
+    penLift = false;
   } else {
     tft.drawLine(pointX, pointY, screen_x, screen_y, TFT_BLACK);
   }
   pointX = screen_x; pointY = screen_y;
+  return true;
 }
 
-// void processTouchScreen() {
-//   TSPoint touch = ts.getPoint();
-//   pinMode(YP, OUTPUT); 
-//   pinMode(XM, OUTPUT); 
-//   if (touch.z < MINPRESSURE || touch.z > MAXPRESSURE) {
-// 	return;
-//   }
-//   int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
-//   int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
+void sign() {
+  int delayCount = 0;
+  while (!processTouchScreen()) {
+    delay(1); delayCount++;
+  }
+  penLift = true;
+}
 
-//   tft.fillRect(screen_x - 1,screen_y - 1, CURSOR_SIZE, CURSOR_SIZE, TFT_BLACK);
-
-// }
 int main() {
   setup();
   while (true) {
-    processTouchScreen();
+    sign();
   }
   Serial.end();
   return 0;
