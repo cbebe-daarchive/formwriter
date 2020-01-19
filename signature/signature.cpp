@@ -7,6 +7,8 @@
 // physical dimensions of the tft display (# of pixels)
 #define TFT_WIDTH  480
 #define TFT_HEIGHT 320
+#define FORM_WIDTH 320
+#define FORM_HEIGHT 260
 
 // touch screen pins, obtained from the documentation
 #define YP A3 // must be an analog pin, use "An" notation!
@@ -36,7 +38,8 @@ void writeVertical(char text[], int X, int Y, int length) {
   }
 }
 
-void setupButtons() {
+void setupFields() {
+  tft.drawRect(30, 30, FORM_WIDTH, FORM_HEIGHT, TFT_BLACK);
   tft.drawRect(TFT_WIDTH - 60, 0, 60, 320, TFT_BLACK);
   tft.drawRect(TFT_WIDTH - 60, TFT_HEIGHT/2, 60, 320, TFT_BLACK);
   tft.setTextColor(TFT_BLACK);
@@ -55,11 +58,20 @@ void setup() {
   tft.begin(ID);
   tft.fillScreen(TFT_WHITE);
   tft.setRotation(1);
-  setupButtons();
+  setupFields();
+}
+
+void fieldReset() {
+  tft.fillRect(31, 31, FORM_WIDTH - 1, FORM_HEIGHT - 1, TFT_WHITE);
+  penLift = false;
+}
+
+void fieldSubmit() {
+  return;
 }
 
 int pointX, pointY; bool penLift = true;
-
+unsigned int numPoints = 0;
 bool processTouchScreen() {
   TSPoint touch = ts.getPoint();
   pinMode(YP, OUTPUT); 
@@ -71,13 +83,22 @@ bool processTouchScreen() {
 
   int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
   int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
-  if (penLift) {
-    tft.drawPixel(screen_x, screen_y, TFT_BLACK);
-    penLift = false;
-  } else {
-    tft.drawLine(pointX, pointY, screen_x, screen_y, TFT_BLACK);
+  if (screen_x > 40 && screen_x < 380 && screen_y > 40 && screen_y < 280) {
+    if (penLift) {
+      tft.drawPixel(screen_x, screen_y, TFT_BLACK);
+      penLift = false;
+    } else {
+      tft.drawLine(pointX, pointY, screen_x, screen_y, TFT_BLACK);
+    }
+    pointX = screen_x; pointY = screen_y;
+    numPoints++;
+  } else if (screen_x > TFT_WIDTH - 60) {
+    if (screen_y < TFT_HEIGHT/2) {
+      fieldReset();
+    } else {
+      fieldSubmit();
+    }
   }
-  pointX = screen_x; pointY = screen_y;
   return true;
 }
 
