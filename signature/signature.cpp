@@ -65,7 +65,7 @@ bool processTouchScreen() {
 
 void sign() {
   int delayCount = 0;
-  while (!processTouchScreen()) {
+  while (!processTouchScreen() || delayCount < 100) {
     delay(1); delayCount++;
   }
   penLift = true;
