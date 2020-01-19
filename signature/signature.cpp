@@ -95,14 +95,18 @@ void serialFeedback(uint32_t delta) {
 
 }
 
+void uint16_to_serial3(uint16_t num) {
+  Serial3.write((char)(num >> 0));
+  Serial3.write((char)(num >> 8));
+}
+
 void fieldSubmit() {
   clearOutputField();
   tft.println("Sending to Serial...");
   uint32_t timeA = millis();
   for (uint16_t i = 0; i < pointIndex; i++) {
-    Serial3.print(" X: ");
-    Serial3.print(pointsX[i]); Serial3.print("  Y: ");
-    Serial3.println(pointsY[i]); 
+    uint16_to_serial3(pointsX[pointIndex]);
+    uint16_to_serial3(pointsY[pointIndex]);
   }
   serialFeedback(millis() - timeA);
   dataSent = true; 
