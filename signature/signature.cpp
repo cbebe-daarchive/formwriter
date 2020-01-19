@@ -40,6 +40,8 @@ void setup() {
   tft.setRotation(1);
 }
 
+int pointX, pointY; bool first = true;
+
 void processTouchScreen() {
   TSPoint touch = ts.getPoint();
   pinMode(YP, OUTPUT); 
@@ -49,11 +51,28 @@ void processTouchScreen() {
   }
   int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
   int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
-
-  tft.fillRect(screen_x - 1,screen_y - 1, CURSOR_SIZE, CURSOR_SIZE, TFT_BLACK);
-
+  if (first) {
+    tft.drawPixel(screen_x, screen_y, TFT_BLACK);
+    first = false;
+  } else {
+    tft.drawLine(pointX, pointY, screen_x, screen_y, TFT_BLACK);
+  }
+  pointX = screen_x; pointY = screen_y;
 }
 
+// void processTouchScreen() {
+//   TSPoint touch = ts.getPoint();
+//   pinMode(YP, OUTPUT); 
+//   pinMode(XM, OUTPUT); 
+//   if (touch.z < MINPRESSURE || touch.z > MAXPRESSURE) {
+// 	return;
+//   }
+//   int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
+//   int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
+
+//   tft.fillRect(screen_x - 1,screen_y - 1, CURSOR_SIZE, CURSOR_SIZE, TFT_BLACK);
+
+// }
 int main() {
   setup();
   while (true) {
