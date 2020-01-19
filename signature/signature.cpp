@@ -24,6 +24,8 @@
 #define MINPRESSURE   10
 #define MAXPRESSURE 1000
 
+#define CURSOR_SIZE 3
+
 MCUFRIEND_kbv tft;
 TouchScreen ts = TouchScreen(XP, YP, XM, YM, 300);
 // different than SD
@@ -39,18 +41,17 @@ void setup() {
 }
 
 void processTouchScreen() {
-	TSPoint touch = ts.getPoint();
-	pinMode(YP, OUTPUT); 
-	pinMode(XM, OUTPUT); 
-	if (touch.z < MINPRESSURE || touch.z > MAXPRESSURE) {
-		return;
-	}
-	int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
-	int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
+  TSPoint touch = ts.getPoint();
+  pinMode(YP, OUTPUT); 
+  pinMode(XM, OUTPUT); 
+  if (touch.z < MINPRESSURE || touch.z > MAXPRESSURE) {
+	return;
+  }
+  int16_t screen_x = map(touch.y, TS_MINX, TS_MAXX, TFT_WIDTH-1, 0);
+  int16_t screen_y = map(touch.x, TS_MINY, TS_MAXY, TFT_HEIGHT-1, 0);
 
-  tft.drawpixel(screen_x,screen_y, TFT_BLACK);
+  tft.fillRect(screen_x - 1,screen_y - 1, CURSOR_SIZE, CURSOR_SIZE, TFT_BLACK);
 
-  delay(5);
 }
 
 int main() {
